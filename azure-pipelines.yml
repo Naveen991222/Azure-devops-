@@ -1,0 +1,32 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  imageName: 'yourdockerhubusername/sample-app'
+
+steps:
+# Step 1: Checkout your code
+- checkout: self
+
+# Step 2: Build Docker image
+- task: Docker@2
+  displayName: 'Build Docker image'
+  inputs:
+    command: 'build'
+    repository: '$(imageName)'
+    Dockerfile: '**/Dockerfile'
+    tags: |
+      latest
+
+# Step 3: Push Docker image to Docker Hub
+- task: Docker@2
+  displayName: 'Push Docker image to Docker Hub'
+  inputs:
+    command: 'push'
+    repository: '$(imageName)'
+    tags: |
+      latest
+    containerRegistry: 'dockerhub-service-connection'
